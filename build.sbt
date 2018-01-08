@@ -11,7 +11,9 @@ libraryDependencies ++= Seq(
   "org.scalikejdbc" %% "scalikejdbc"       % "3.1.0",
   "org.scalikejdbc" %% "scalikejdbc-interpolation" % "2.5.0",
   "org.scalikejdbc" %% "scalikejdbc-config"        % "2.5.0",
-  "ch.qos.logback"  %  "logback-classic"           % "1.2.3"
+  "ch.qos.logback"  %  "logback-classic"           % "1.2.3",
+  "com.github.gilbertw1" %% "slack-scala-client" % "0.2.2",
+  "org.apache.httpcomponents" % "httpclient" % "4.5.4"
 )
 
 lazy val assemblySettings = Seq(

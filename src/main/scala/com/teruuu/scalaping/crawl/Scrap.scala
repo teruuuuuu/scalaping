@@ -3,8 +3,10 @@ package com.teruuu.scalaping.crawl
 import java.sql.Timestamp
 import java.time.LocalDateTime
 
+import com.teruuu.scalaping.config.ApplicationConfig
 import com.teruuu.scalaping.db.{ScalapTop, TopLink}
 import com.teruuu.scalaping.repository.TopLinkRepository
+import com.teruuu.scalaping.slack.SlackCaller
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
@@ -23,13 +25,20 @@ object Scrap {
     val currentLinks = links.toIterable.map{ link =>
       TopLink(0, scalapTop.id, link.attr("abs:href").trim, Option(link.text.trim), now)
     }
+    val currentUrls = currentLinks.map(_.url)
 
-    val newLinks = currentLinks.filter(currentLink =>
-      savedLinks.find{savedLink => savedLink.url.equals(currentLink.url)} match {
-        case Some(x) => false
-        case None => true
+//    val newLinks = currentLinks.filter(currentLink =>
+//      savedLinks.find{savedLink => savedLink.url.equals(currentLink.url)} match {
+//        case Some(x) => false
+//        case None => true
+//      }
+//    )
+
+    val newLinks = currentLinks.foldLeft(List.empty[TopLink]){ (acc, v)  => v match {
+        case v if currentUrls.contains(v.url) || acc.map(_.url).contains(v.url) => acc
+        case v => acc :+ v
       }
-    )
+    }
 
     val deletedLinks = savedLinks.filter(savedLink =>
       currentLinks.find{currentLink => currentLink.url.equals(savedLink.url)} match {
@@ -45,6 +54,10 @@ object Scrap {
     deletedLinks.foreach { link =>
       if(link.add_date.before(monthAgo))
         TopLinkRepository.delete(link.id)
+    }
+
+    if(newLinks.length > 0){
+      SlackCaller.call(ApplicationConfig.slack_token, ApplicationConfig.slack_channel, newLinks.map(_.url).mkString("\n"))
     }
   }
 }
