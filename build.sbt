@@ -4,8 +4,14 @@ name := "scalaping"
 version := "0.1"
 
 scalaVersion := "2.12.4"
+// scalaVersion := "2.11.12"
+
+resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 
 libraryDependencies ++= Seq(
+  "com.typesafe.akka" %% "akka-actor" % "2.5.8",
+  "com.typesafe.akka" %% "akka-testkit" % "2.5.8" % Test,
+  "com.enragedginger" %% "akka-quartz-scheduler" % "1.6.1-akka-2.5.x",
   "org.jsoup" % "jsoup" % "1.7.2",
   "org.postgresql" % "postgresql" % "9.4-1201-jdbc4",
   "org.scalikejdbc" %% "scalikejdbc"       % "3.1.0",
@@ -22,7 +28,8 @@ lazy val assemblySettings = Seq(
     case x =>
       val oldStrategy = (assemblyMergeStrategy in assembly).value
       oldStrategy(x)
-  }
+  },
+  mainClass in assembly := Some("com.teruuu.scalaping.scheduler.TaskScheduler")
 )
 
 lazy val app = (project in file(".")).

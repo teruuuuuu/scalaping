@@ -25,17 +25,10 @@ object Scrap {
     val currentLinks = links.toIterable.map{ link =>
       TopLink(0, scalapTop.id, link.attr("abs:href").trim, Option(link.text.trim), now)
     }
-    val currentUrls = currentLinks.map(_.url)
-
-//    val newLinks = currentLinks.filter(currentLink =>
-//      savedLinks.find{savedLink => savedLink.url.equals(currentLink.url)} match {
-//        case Some(x) => false
-//        case None => true
-//      }
-//    )
+    val savedUrls = savedLinks.map(_.url)
 
     val newLinks = currentLinks.foldLeft(List.empty[TopLink]){ (acc, v)  => v match {
-        case v if currentUrls.contains(v.url) || acc.map(_.url).contains(v.url) => acc
+        case v if savedUrls.contains(v.url) || acc.map(_.url).contains(v.url) => acc
         case v => acc :+ v
       }
     }
@@ -56,8 +49,8 @@ object Scrap {
         TopLinkRepository.delete(link.id)
     }
 
-    if(newLinks.length > 0){
-      SlackCaller.call(ApplicationConfig.slack_token, ApplicationConfig.slack_channel, newLinks.map(_.url).mkString("\n"))
+    if(newLinks.length >= 1){
+      SlackCaller.call(ApplicationConfig.slack_token, ApplicationConfig.slack_channel, newLinks.map(link => link.url).mkString("\n"))
     }
   }
 }

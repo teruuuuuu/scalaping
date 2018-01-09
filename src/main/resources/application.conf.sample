@@ -9,3 +9,13 @@ db.default.password=****
 slack.token=****
 slack.channel=****
 
+akka {
+  quartz {
+    schedules {
+      CrawlTask {
+        description = "クローラ"
+        expression = "0 0 0 ? * *"
+      }
+    }
+  }
+}
