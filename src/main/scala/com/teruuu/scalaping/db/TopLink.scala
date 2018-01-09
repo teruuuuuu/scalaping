@@ -27,7 +27,7 @@ object TopLink {
     SQL(
       s"""
         insert into top_link (top_id, url, text, add_date)
-        values ( '${top_id}', '${url}', '${text}', '${add_date}')
+        values ( '${top_id}', '${url.replace("'","")}', '${text.replace("'","")}', '${add_date}')
         """).updateAndReturnGeneratedKey.apply()
 
   def delete(id: Int)(implicit session: DBSession = AutoSession) =

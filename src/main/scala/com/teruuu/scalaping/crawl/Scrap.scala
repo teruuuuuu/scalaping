@@ -14,8 +14,7 @@ import scala.collection.JavaConversions._
 
 object Scrap {
 
-
-  def trace(scalapTop: ScalapTop) = {
+  def linkInfo(scalapTop: ScalapTop):(List[TopLink], List[TopLink]) = {
     val savedLinks = TopLinkRepository.selectByTopId(scalapTop.id)
     val now = Timestamp.valueOf(LocalDateTime.now())
     val monthAgo = Timestamp.valueOf(LocalDateTime.now.minusMonths(1))
@@ -28,9 +27,9 @@ object Scrap {
     val savedUrls = savedLinks.map(_.url)
 
     val newLinks = currentLinks.foldLeft(List.empty[TopLink]){ (acc, v)  => v match {
-        case v if savedUrls.contains(v.url) || acc.map(_.url).contains(v.url) => acc
-        case v => acc :+ v
-      }
+      case v if savedUrls.contains(v.url) || acc.map(_.url).contains(v.url) => acc
+      case v => acc :+ v
+    }
     }
 
     val deletedLinks = savedLinks.filter(savedLink =>
@@ -39,6 +38,16 @@ object Scrap {
         case None => true
       }
     )
+    (newLinks, deletedLinks)
+  }
+
+
+  def trace(scalapTop: ScalapTop) = {
+    val link = linkInfo(scalapTop)
+    val newLinks = link._1
+    val deletedLinks = link._2
+    val monthAgo = Timestamp.valueOf(LocalDateTime.now.minusMonths(1))
+
 
     newLinks.foreach{ link =>
       TopLinkRepository.add(scalapTop.id, link.url, link.text.getOrElse(""))

@@ -30,7 +30,7 @@ object ScalapTop {
     SQL(
       s"""
         insert into scrape_top (url, title, description, create_date)
-        values ( '${url}', '${title}', '${description}', '${create_date}')
+        values ( '${url.replace("'","")}', '${title.replace("'","")}', '${description.replace("'","")}', '${create_date}')
         """).updateAndReturnGeneratedKey.apply()
 
   def delete(id: Int)(implicit session: DBSession = AutoSession) =
