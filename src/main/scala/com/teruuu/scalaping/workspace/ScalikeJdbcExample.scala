@@ -17,14 +17,14 @@ object ScalikeJdbcExample extends DbSetting with LogSettings{
         ScalapTop.all
     }
 
-    val insert_id = DB localTx  { implicit session =>
-      ScalapTop.insert("http://japanese.engadget.com/", "engadet", "", Timestamp.valueOf(LocalDateTime.now()))
-    }
-    println("id:" + insert_id)
-
-    DB localTx{ implicit session =>
-      ScalapTop.delete(insert_id.toInt)
-    }
+//    val insert_id = DB localTx  { implicit session =>
+//      ScalapTop.insert("http://japanese.engadget.com/", "engadet", "", Timestamp.valueOf(LocalDateTime.now()))
+//    }
+//    println("id:" + insert_id)
+//
+//    DB localTx{ implicit session =>
+//      ScalapTop.delete(insert_id.toInt)
+//    }
   }
 
 }

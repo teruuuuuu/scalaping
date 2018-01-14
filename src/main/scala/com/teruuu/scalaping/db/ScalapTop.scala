@@ -2,41 +2,38 @@ package com.teruuu.scalaping.db
 
 import java.sql.Timestamp
 
-import scalikejdbc.{AutoSession, DBSession, SQL, WrappedResultSet}
+import scalikejdbc.{AutoSession, DBSession, delete, insert, ResultName, select, SQL, SQLSyntaxSupport, withSQL, WrappedResultSet}
 
-case class ScalapTop(id: Int, url: String, title: Option[String], description: Option[String], create_date: Timestamp){
+case class ScalapTop(id: Int, url: String, title: Option[String], description: Option[String], create_date: Timestamp)
 
-  def toView = {
-    "id: %d  url: %s  title: %s  description: %s  create_date: %s".format(id, url, title.getOrElse(""), description.getOrElse(""), create_date)
-  }
-}
+object ScalapTop extends SQLSyntaxSupport[ScalapTop] {
+  override val tableName = "scrape_top"
+  val s = ScalapTop.syntax("s")
+  val c = ScalapTop.column
 
-object ScalapTop {
+  def apply(rs: WrappedResultSet): ScalapTop =
+    ScalapTop(rs.int("id"), rs.string("url"), rs.stringOpt("title"), rs.stringOpt("description"), rs.timestamp("create_date"))
 
-  val selectColumns = (rs: WrappedResultSet) =>
-    ScalapTop(
-      id = rs.int("id"),
-      url = rs.string("url"),
-      title = Option(rs.string("title")),
-      description = Option(rs.string("description")),
-      create_date = rs.timestamp("create_date")
-    )
+  def apply(c: ResultName[ScalapTop])(rs: WrappedResultSet): ScalapTop =
+    ScalapTop(rs.int(c.id), rs.string(c.url), rs.stringOpt(c.title), rs.stringOpt(c.title), rs.timestamp(c.create_date))
 
   def all(implicit session: DBSession = AutoSession) =
-    SQL("select * from scrape_top order by id").map(selectColumns).list().apply()
+    withSQL {
+      select(c.id, c.url, c.title, c.description, c.create_date).
+        from(ScalapTop as s).
+        orderBy(c.id)
+    }.map(ScalapTop(_)).list.apply()
 
-  def insert(url: String, title:String, description:String, create_date: Timestamp)
+  def insertScalapTop(url: String, title:String, description:String, create_date: Timestamp)
             (implicit session: DBSession = AutoSession): Long =
-    SQL(
-      s"""
-        insert into scrape_top (url, title, description, create_date)
-        values ( '${url.replace("'","")}', '${title.replace("'","")}', '${description.replace("'","")}', '${create_date}')
-        """).updateAndReturnGeneratedKey.apply()
+    withSQL {
+      insert.into(ScalapTop).namedValues(c.url -> url, c.title -> title,
+        c.description -> description, c.create_date -> create_date)
+    }.update.apply()
 
-  def delete(id: Int)(implicit session: DBSession = AutoSession) =
-    SQL(
-      s"""delete from scrape_top
-          where id = ${id}""").
-      updateAndReturnGeneratedKey.apply()
+  def deleteScalapTop(id: Int)(implicit session: DBSession = AutoSession) =
+    withSQL {
+      delete.from(ScalapTop).where.eq(c.id, id)
+    }.update.apply()
 
 }

@@ -1,14 +1,13 @@
 package com.teruuu.scalaping.scheduler
 
 import akka.actor.{Actor, ActorLogging, Props}
-import com.teruuu.scalaping.crawl.Executor
+import com.teruuu.scalaping.crawl.CrawlInterface
 
 class TaskRunner extends Actor with ActorLogging{
   def receive = {
     case TaskExecutor.SendMessage(txt: String) =>
-      Executor.run
+      CrawlInterface.run //クロール開始
   }
-
 }
 
 object TaskRunner {

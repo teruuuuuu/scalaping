@@ -15,8 +15,9 @@ libraryDependencies ++= Seq(
   "org.jsoup" % "jsoup" % "1.7.2",
   "org.postgresql" % "postgresql" % "9.4-1201-jdbc4",
   "org.scalikejdbc" %% "scalikejdbc"       % "3.1.0",
-  "org.scalikejdbc" %% "scalikejdbc-interpolation" % "2.5.0",
-  "org.scalikejdbc" %% "scalikejdbc-config"        % "2.5.0",
+  "org.scalikejdbc" %% "scalikejdbc-interpolation" % "3.1.0",
+  "org.scalikejdbc" %% "scalikejdbc-config"        % "3.1.0",
+  "org.scalikejdbc" %% "scalikejdbc-syntax-support-macro" % "3.1.0",
   "ch.qos.logback"  %  "logback-classic"           % "1.2.3",
   "com.github.gilbertw1" %% "slack-scala-client" % "0.2.2",
   "org.apache.httpcomponents" % "httpclient" % "4.5.4"
