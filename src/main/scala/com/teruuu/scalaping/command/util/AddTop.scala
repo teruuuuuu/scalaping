@@ -1,9 +1,9 @@
 package com.teruuu.scalaping.command.util
 
 import com.teruuu.scalaping.crawl.{CrawlInterface, ScalapEntity}
+import com.teruuu.scalaping.db.config.DbSetting
 
-object AddTop {
-
+object AddTop  extends DbSetting {
 
   def main(args: Array[String]) = {
     if(args.length < 3) {
